@@ -1,38 +1,39 @@
- //import logo from './logo.svg';
-import React, { useState } from 'react';
-import './App.css';
+import React from "react";
+import "./formStyle.css";
 
-function FormGenerator({
-  className="form",
-  title,
-  defaultValues,
-  model,
-}) {
+export default class FormGenerator extends React.Component {
+  state = {};
+//Restruturing to function componenet coming soon
 
-  const [key, setKey] = useState()
+  onSubmit = e => {
+    e.preventDefault();
+    if (this.props.onSubmit) this.props.onSubmit(this.state);
+  };
 
-  function onChange(e, keyy, type = "single") {
+  onChange = (e, key, type = "single") => {
     //console.log(`${key} changed ${e.target.value} type ${type}`);
     if (type === "single") {
-      setKey(
-         e.target.value,
+      this.setState(
+        {
+          [key]: e.target.value
+        },
         () => {}
       );
     } else {
       // Array of values (e.g. checkbox): TODO: Optimization needed.
       let found = this.state[key]
-        ? key.find(d => d === e.target.value)
+        ? this.state[key].find(d => d === e.target.value)
         : false;
 
       if (found) {
-        let data = key.filter(d => {
+        let data = this.state[key].filter(d => {
           return d !== found;
         });
         this.setState({
           [key]: data
         });
       } else {
-        console.log("found", keyy, this.state[key]);
+        console.log("found", key, this.state[key]);
         // this.setState({
         //   [key]: [e.target.value, ...this.state[key]]
         // });
@@ -44,9 +45,9 @@ function FormGenerator({
     }
   };
 
- const renderForm = () => {
-    //let model = this.props.model;
-   //let defaultValues = this.props.defaultValues;
+  renderForm = () => {
+    let model = this.props.model;
+    //let defaultValues = this.props.defaultValues;
 
     let formUI = model.map(m => {
       let key = m.key;
@@ -55,8 +56,8 @@ function FormGenerator({
       let name = m.name;
       let value = m.value;
 
-      //let target = key;
-      value = m.value || "" //this.state[target] || "";
+      let target = key;
+      value = this.state[target] || "";
 
       let input = (
         <input
@@ -67,7 +68,7 @@ function FormGenerator({
           name={name}
           value={value}
           onChange={e => {
-            onChange(e);
+            this.onChange(e, target);
           }}
         />
       );
@@ -86,7 +87,7 @@ function FormGenerator({
                 checked={checked}
                 value={o.value}
                 onChange={e => {
-                  onChange(e/* , o.name */);
+                  this.onChange(e, o.name);
                 }}
               />
               <label key={"ll" + o.key}>{o.label}</label>
@@ -117,7 +118,7 @@ function FormGenerator({
           <select
             value={value}
             onChange={e => {
-              onChange(e/* , m.key */);
+              this.onChange(e, m.key);
             }}
           >
             {input}
@@ -144,7 +145,7 @@ function FormGenerator({
                 checked={checked}
                 value={o.value}
                 onChange={e => {
-                  onChange(e, /* m.key, */ "multiple");
+                  this.onChange(e, m.key, "multiple");
                 }}
               />
               <label key={"ll" + o.key}>{o.label}</label>
@@ -167,23 +168,24 @@ function FormGenerator({
     return formUI;
   };
 
-  return (
-    <div className={className}>
-      <h3 className="form-title">{title}</h3>
-      <form
-        className="dynamic-form"
-        onSubmit={e => {
-          this.onSubmit(e);
-        }}
-      >
-        {renderForm()}
-        <div className="form-actions">
-          <button type="submit">submit</button>
-        </div>
-      </form>
-    </div>
-  );
-}
+  render() {
+    let title = this.props.title || "Dynamic Form";
 
-export default FormGenerator;
- 
+    return (
+      <div className={this.props.className}>
+        <h3 className="form-title">{title}</h3>
+        <form
+          className="dynamic-form"
+          onSubmit={e => {
+            this.onSubmit(e);
+          }}
+        >
+          {this.renderForm()}
+          <div className="form-actions">
+            <button type="submit">submit</button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+}
