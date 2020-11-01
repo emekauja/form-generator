@@ -1,5 +1,5 @@
 import React from "react";
-import "./formStyle.css";
+import './formStyle.css';
 
 export default class FormGenerator extends React.Component {
   state = {};
