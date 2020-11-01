@@ -64,12 +64,6 @@ const FormPage = () => {
 
 export default FormPage;
 ```
-
-##Rendered Form
-![RenderedForm](./img/form.png)
-
-<img width="1280" alt="Screen Shot 2020-09-08 at 5 08 32 AM" src="img/form.png">
-
 ## Testing
 At the moment there are 3 required checks running on GitHub Actions for any incoming pull request:
 - Client Javascript & CSS linter: `cd ~/form-generator && npm run lint`
